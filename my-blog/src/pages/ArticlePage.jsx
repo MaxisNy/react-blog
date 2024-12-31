@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NotFoundPage from './NotFoundPage';
 import CommentsList from '../components/CommentsList';
@@ -11,8 +11,9 @@ const ArticlePage = () => {
     const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [], canUpvote: false });
     const { canUpvote } = articleInfo;
     const { articleId } = useParams();
-
     const { user, isLoading } = useUser();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadArticleInfo = async () => {
@@ -49,7 +50,7 @@ const ArticlePage = () => {
         <div className="upvotes-section">
             {user
                 ? <button onClick={addUpvote}>{canUpvote ? 'Upvote' : 'Already Upvoted'}</button>
-                : <button>Log in to upvote</button>}
+                : <button onClick={() => {navigate('/login')}}>Log in to upvote</button>}
             <p>This article has {articleInfo.upvotes} upvote(s)</p>
         </div>
         {article.content.map((paragraph, i) => (
@@ -59,7 +60,7 @@ const ArticlePage = () => {
             ? <AddCommentForm
                 articleName={articleId}
                 onArticleUpdated={updatedArticle => setArticleInfo(updatedArticle)} />
-            : <button>Log in to add a comment</button>}
+            : <button onClick={() => {navigate('/login')}}>Log in to add a comment</button>}
         <CommentsList comments={articleInfo.comments} />
         </>
     );
